@@ -16,7 +16,7 @@ VALUES ("specialist", 150, 2),
        ("specialist", 160, 4),
        ("developer", 180, 1),
        ("tester", 120, 1),
-       ("distinguished engimeer", 400, 2);
+       ("distinguished engineer", 400, 2);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Vasya", "Pupkin", 12, null),
