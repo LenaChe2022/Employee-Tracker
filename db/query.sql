@@ -2,6 +2,7 @@
 --THEN I am presented with a formatted table showing--
 --department names and department ids--
 SELECT * FROM department;
+SELECT name AS department_name, id AS department_id FROM department;
 
 --show the role table--
 SELECT * FROM role;
@@ -16,7 +17,7 @@ SELECT * FROM employee;
 SELECT role.title AS job_title, role.id AS role_id, department.name AS department, salary FROM role JOIN department ON role.department_id = department.id;
 
 --WHEN I choose to view all employees--
---THEN I am presented with a formatted table showing employee data--
+--formatted table showing employee data--
 --including employee ids, first names, last names, job titles, departments,--
 -- salaries, and managers that the employees report to--
 SELECT employee.id AS employee_id, first_name, last_name, role.title AS job_title, department.name AS department, role.salary AS salary, manager_id FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id; 
