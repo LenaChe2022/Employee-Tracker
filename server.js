@@ -20,23 +20,7 @@ const db = mysql.createConnection(
 );
 
 
-
-//Show a table
-function showTable(name){
-    const sql = `SELECT * FROM ${name};`;
-    
-    db.query(sql, (err, rows) => {
-      if (err) {
-       console.error(err);
-         return;
-      }
-      console.log('\n');
-      console.table(rows);      
-    });
-
-    console.log("showTable - done.");
-};
-//Show departments name and id
+//Show department's name and id
 function viewDepartments(){
     const sql = `SELECT name AS department_name, id AS department_id FROM department;`;
     db.query(sql, (err, rows) => {
@@ -80,20 +64,21 @@ function viewEmployees(){
       });
 };
 
-//Add a department
+//Add a new department
 function addDepartment(){
     const sql = `INSERT INTO department (name) VALUES (?);`;
     inquirer
          .prompt([
-            {tipe: "input",
+            {type: "input",
             message: "Enter the name of the Department you want to add",
             name: "department"
         }
          ])
          .then((data) => {
             if (!data.department){
-                console.log("You need to input the name of Department");
-                quit();
+                console.log("\nYou need to input the name of Department\n");
+                addDepartment();
+                //quit();
             } else {
                 params = data.department;
                 db.query(sql, params, (err, rows) => {
@@ -109,6 +94,65 @@ function addDepartment(){
          
 };
 
+// Get actual list of departments for prompt
+function getDepartmentsForRole(){
+    const sql = `SELECT name, id FROM department;`;
+    db.query(sql, (err, rows) => {
+        if (err) {
+         console.error(err);
+           return;
+        }
+        addNewRole(rows);     
+      });
+};
+
+
+//Get info for a new role
+function addNewRole(array){
+    const allDepartmentArray = array;    
+    let choicesArray = [];
+    allDepartmentArray.forEach(element => 
+        choicesArray.push(element.name));
+
+    inquirer
+    .prompt([
+       {type: "input",
+       message: "Enter the role you want to add",
+       name: "roleName"
+       },
+       {type: "input",
+       message: "Enter the salary for that role",
+       name: "salary"
+       },
+       {type:"list",
+       message: "Choose the department",
+       choices: choicesArray,
+       name: "department",
+       }
+    ]).then((data) => {
+        for (let i = 0; i < allDepartmentArray.length; i++) {
+            if (data.department === allDepartmentArray[i].name) {
+                const depId = allDepartmentArray[i].id;
+                createNewRole(data.roleName, data.salary, depId);
+            };  
+        };
+    });
+};
+
+//Add new role in the db
+function createNewRole(title,salary,depId) {
+    const sql =`INSERT INTO role (title, salary, department_id) VALUES ("${title}",${salary},${depId});`;  
+    db.query(sql, (err, rows) => {
+        if (err) {
+         console.error(err);
+           return;
+        }
+        console.log('\nNew Role added\n'); 
+        startFunction();
+      });
+};
+
+
 //Main function presented the list of options
 function promptUser(){
 inquirer
@@ -123,27 +167,19 @@ inquirer
         const decision = data.action;
         switch (decision){
             case 'View All Departments':
-                //go to view function
                 viewDepartments()
-                // .then(() => console.log ('your departments sorted'));
-                // startFunction();
                 break;
             case 'View All Roles':
-                //call view roles function
                 viewRoles();
-                console.log('Roles - done.');
                 break;
             case 'View All Employees':
-                //call view employees function
                 viewEmployees();
-
                 break;
             case 'Add a Department':
-                //goto funtion
                 addDepartment();
                 break;
             case 'Add a Role':
-                //goto funtion
+                getDepartmentsForRole();
                 break; 
             case 'Add an Employee':
                     //goto funtion
@@ -158,10 +194,7 @@ inquirer
                 console.log("That's not supported");
                 break;                                            
         };
-
     })
-
-    console.log("Init - done.");
 };
 
 function startFunction() {
