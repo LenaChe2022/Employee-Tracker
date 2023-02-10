@@ -34,6 +34,7 @@ To run this app follow steps:
 ## Usage
 
 The following video shows an example of the application being used from the command line:
+https://drive.google.com/file/d/1xq_ZOec34Yj-V9mrEgMPmjE0oCFX_Cav/view
 
 
 * GIVEN a command-line application that accepts user input
